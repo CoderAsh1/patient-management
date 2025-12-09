@@ -11,9 +11,7 @@ import com.example.patientservice.mapper.PatientMapper;
 
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -45,5 +43,9 @@ public class PatientService {
         patient.setDateOfBirth(LocalDate.parse(patientDto.getDateOfBirth()));
         patientRepository.save(patient);
         return PatientMapper.toDTO(patient);
+    }
+
+    public void deletePatient(UUID id) {
+        patientRepository.deleteById(id);
     }
 }
