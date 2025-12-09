@@ -13,7 +13,6 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,5 +33,5 @@ public class Patient {
     private LocalDate dateOfBirth;
 
     @NotNull
-    private LocalDate registerDate;
+    private LocalDate registeredDate;
 }
