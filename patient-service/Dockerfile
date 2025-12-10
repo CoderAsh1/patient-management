@@ -1,4 +1,4 @@
-FROM maven:3.9.9-eclipse-temurin-21 AS builder
+FROM maven:3.9.9-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 
@@ -8,17 +8,19 @@ RUN mvn dependency:go-offline -B
 
 COPY src ./src
 
-RUN mvn clean package
+# Build the application without running tests to avoid DB dependency during image build
+RUN mvn -B --no-transfer-progress -DskipTests clean package
 
 
-# FIX 1 & 2: Changed to a valid image provider and matched version 21
-FROM eclipse-temurin:21-jre AS runner
+# Use JRE 17 to match the project's target version
+FROM eclipse-temurin:17-jre AS runner
 
 WORKDIR /app
 
 # FIX 3: Corrected spelling from 'SNAPSOT' to 'SNAPSHOT'
 COPY --from=builder /app/target/patient-service-0.0.1-SNAPSHOT.jar ./app.jar
 
-EXPOSE 8080
+# Match the service port defined in application.properties
+EXPOSE 8090
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
