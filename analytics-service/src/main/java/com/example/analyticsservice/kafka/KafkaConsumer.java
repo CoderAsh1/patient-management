@@ -15,6 +15,7 @@ public class KafkaConsumer {
     public void consume(byte[] event) {
         try {
             PatientEvent patientEvent = PatientEvent.parseFrom(event);
+            log.info("Received patient event: {}", patientEvent.toString());
         } catch (InvalidProtocolBufferException e) {
             log.error("Error in consuming patient event{}", e.getMessage());
             throw new RuntimeException(e);
