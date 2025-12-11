@@ -5,6 +5,7 @@ import com.example.patientservice.dto.PatientResponseDTO;
 import com.example.patientservice.exception.EmailAlreadyExistException;
 import com.example.patientservice.exception.PatientNotFoundException;
 import com.example.patientservice.grpc.BillingServiceGrpcClient;
+import com.example.patientservice.kafka.KafkaProducer;
 import com.example.patientservice.model.Patient;
 import org.springframework.stereotype.Service;
 import com.example.patientservice.repository.PatientRepository;
@@ -19,28 +20,31 @@ import java.util.UUID;
 public class PatientService {
     private final PatientRepository patientRepository;
     private final BillingServiceGrpcClient billingServiceGrpcClient;
+    private final KafkaProducer kafkaProducer;
 
-    public PatientService(PatientRepository patientRepository, BillingServiceGrpcClient billingServiceGrpcClient) {
+    public PatientService(PatientRepository patientRepository, BillingServiceGrpcClient billingServiceGrpcClient, KafkaProducer kafkaProducer) {
         this.patientRepository = patientRepository;
         this.billingServiceGrpcClient = billingServiceGrpcClient;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public List<PatientResponseDTO> getPatients() {
         List<Patient> patients = patientRepository.findAll();
-        return  patients.stream().map(PatientMapper::toDTO).toList();
+        return patients.stream().map(PatientMapper::toDTO).toList();
     }
 
     public PatientResponseDTO createPatient(PatientRequestDTO patient) {
-        if(patientRepository.existsByEmail(patient.getEmail())) {
+        if (patientRepository.existsByEmail(patient.getEmail())) {
             throw new EmailAlreadyExistException("Email already exist");
         }
         Patient newPatient = patientRepository.save(PatientMapper.toModel(patient));
-        billingServiceGrpcClient.createBillingAccount(String.valueOf(newPatient.getId()),newPatient.getName(), newPatient.getEmail());
+        billingServiceGrpcClient.createBillingAccount(String.valueOf(newPatient.getId()), newPatient.getName(), newPatient.getEmail());
+        kafkaProducer.sendEvent(newPatient);
         return PatientMapper.toDTO(newPatient);
     }
 
     public PatientResponseDTO updatePatient(UUID id, PatientRequestDTO patientDto) {
-        Patient patient = patientRepository.findById(id).orElseThrow(()-> new PatientNotFoundException("Patient not found"));
+        Patient patient = patientRepository.findById(id).orElseThrow(() -> new PatientNotFoundException("Patient not found"));
         patient.setName(patientDto.getName());
         patient.setEmail(patientDto.getEmail());
         patient.setAddress(patientDto.getAddress());
