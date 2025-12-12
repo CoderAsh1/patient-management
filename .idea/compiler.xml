@@ -32,6 +32,14 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api-gateway" target="17" />
+      <module name="patient-service (1)" target="17" />
+      <module name="patient-service (2)" target="17" />
+      <module name="patient-service (3)" target="17" />
+      <module name="patient-service (4)" target="17" />
+      <module name="patient-service (5)" target="17" />
+      <module name="patient-service (6)" target="1.5" />
+      <module name="patient-service (7)" target="17" />
+      <module name="patient-service (8)" target="17" />
       <module name="routing-service" target="17" />
     </bytecodeTargetLevel>
   </component>
@@ -42,6 +50,14 @@
       <module name="billing-service" options="-parameters" />
       <module name="gateway-service" options="-parameters" />
       <module name="patient-service" options="-parameters" />
+      <module name="patient-service (1)" options="-parameters" />
+      <module name="patient-service (2)" options="-parameters" />
+      <module name="patient-service (3)" options="-parameters" />
+      <module name="patient-service (4)" options="-parameters" />
+      <module name="patient-service (5)" options="-parameters" />
+      <module name="patient-service (6)" options="" />
+      <module name="patient-service (7)" options="-parameters" />
+      <module name="patient-service (8)" options="-parameters" />
       <module name="routing-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
